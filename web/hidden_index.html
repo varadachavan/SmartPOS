@@ -1,0 +1,78 @@
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Statement"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="com.smartpos.DBConnection"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartPOS - Dashboard</title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#"><i class="fa-solid font-awesome me-2"></i>SmartPOS System</a>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold text-secondary">Product Inventory</h3>
+            <button class="btn btn-success"><i class="fa-solid fa-plus me-1"></i> Add New Product</button>
+        </div>
+
+        <!-- Inventory Table -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped mb-0 text-center align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price (₹)</th>
+                            <th>Stock Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <%
+                            try {
+                                Connection con = DBConnection.getConnection();
+                                Statement stmt = con.createStatement();
+                                ResultSet rs = stmt.executeQuery("SELECT * FROM products");
+
+                                while (rs.next()) {
+                        %>
+                        <tr>
+                            <td><%= rs.getInt("id") %></td>
+                            <td class="fw-semibold text-start ps-4"><%= rs.getString("product_name") %></td>
+                            <td><span class="badge bg-info text-dark"><%= rs.getString("category") %></span></td>
+                            <td class="text-success fw-bold">₹<%= rs.getDouble("price") %></td>
+                            <td><%= rs.getInt("stock_quantity") %></td>
+                        </tr>
+                        <%
+                                }
+                                con.close();
+                            } catch (Exception e) {
+                                out.println("<tr><td colspan='5' class='text-danger'>Error: " + e.getMessage() + "</td></tr>");
+                            }
+                        %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
